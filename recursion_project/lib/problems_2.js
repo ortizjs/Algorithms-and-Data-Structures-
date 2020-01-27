@@ -35,12 +35,8 @@ function lucasNumber(n) {
 // sumArray([5, 2])         // => 7
 // sumArray([4, 10, -1, 2]) // => 15
 function sumArray(array) {
-    // var sum = 0;
-    // if (array.length === 0) return sum;
-    // if (array.length === 1) return array[0];
-    // sum += array.pop();
-    // return sum += sumArray(array);
     if (array.length === 0) return 0;
+    // return array.pop() + sumArray(array);
     return array[0] + sumArray(array.slice(1));
 }
 
@@ -57,9 +53,10 @@ function sumArray(array) {
 // reverseString("internet")    // => "tenretni"
 // reverseString("friends")     // => "sdneirf"
 function reverseString(str) {
-    if (str.length === 0 || str.length === 1) return str;
-    return str.slice(str.length - 1) + reverseString(str.slice(0, str.length - 1));
+    if (str.length === 0) return "";
+    return str[str.length - 1] + reverseString(str.slice(0, str.length - 1));
     // return reverseString(str.slice(1)) + str[0];
+
 }
 
 
@@ -70,7 +67,7 @@ function reverseString(str) {
 // A negative exponent can be calculate by taking the reciprocal of the positive exponent.
 // That is, pow(2, -5) is equal to 1 / pow(2, 5)
 // 
-// // Solve this recursively!
+// Solve this recursively!
 //
 // Examples:
 //
@@ -81,9 +78,12 @@ function reverseString(str) {
 // pow(2, -5)   // => 0.03125
 function pow(base, exponent) {
     if (exponent === 0) return 1;
-    if (exponent < 0) return (1/base * (pow(base, exponent + 1)));
+    if (exponent < 0) {
+        return 1 / pow(base, -exponent);
+    }
     return base * pow(base, exponent - 1);
 }
+
 
 // A 1-dimensional array is also known as a flattened array.
 // Write a method, flatten(data), that accepts a single argument. The
@@ -114,16 +114,24 @@ function pow(base, exponent) {
 //     2-dimensional array: [['some data']]
 //     3-dimensional array: [[['some data']]]
 function flatten(data) {
-    newA = [];
-    for (let i = 0; i < data.length; i++) {
-        curr = data[i];
-        if (curr instanceof Array) {
-            newA = newA.concat(flatten(curr));
-        } else {
-            newA.push(curr);
-        }
-    }
-    return newA;
+    let result = [];
+    if (!Array.isArray(data)) return [data];
+    data.forEach((el) => {
+        let flattened = flatten(el);
+        result.push(...flattened);
+    });
+
+    // let i = 0; 
+    // while (i < data.length) {
+    //     curr = data[i];
+    //     if (!Array.isArray(curr)) {
+    //         result.push(curr);
+    //     } else {
+    //         result = result.concat(flatten(curr));
+    //     }
+    //     i++;
+    // }
+    return result;
 }
 
 // Write a function, fileFinder(directories, targetFile), that accepts an object representing directories and a string respresenting a filename.
@@ -166,7 +174,12 @@ function flatten(data) {
 // fileFinder(desktop, 'everlong.flac');            // => true
 // fileFinder(desktop, 'sequoia.jpeg');             // => false
 function fileFinder(directories, targetFile) {
-
+    for (let key in directories) {
+        if (key === targetFile || fileFinder(directories[key], targetFile)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -180,7 +193,15 @@ function fileFinder(directories, targetFile) {
 // pathFinder(desktop, 'everlong.flac'));       // => '/music/genres/rock/everlong.flac'
 // pathFinder(desktop, 'honeybadger.png'));     // => null
 function pathFinder(directories, targetFile) {
-
+    // let path = "";
+    for (let key in directories) {
+        if (key === targetFile) {
+            return "/" + targetFile;
+        }
+        let path = pathFinder(directories[key], targetFile);
+        if (path !== null) return key + path;
+    }
+    return null;
 }
 
 
