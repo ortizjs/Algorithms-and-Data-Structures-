@@ -116,13 +116,15 @@ function pow(base, exponent) {
 //     3-dimensional array: [[['some data']]]
 function flatten(data) {
     let results = [];
-    if (data.length === 1) return [data];
+    if (!Array.isArray(data)) return [data];
     data.forEach((el) => {
-        if (!Array.isArray(el)) {
-            results.push(el);
-        } else {
-            results = results.concat(...flatten(el));
-        }
+        let flattened = flatten(el);
+        results.push(...flattened);
+        // if (!Array.isArray(el)) {
+        //     results.push(el);
+        // } else {
+        //     results = results.concat(...flatten(el));
+        // }
     });
     return results;
 }
